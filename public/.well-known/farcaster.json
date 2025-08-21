@@ -2,11 +2,11 @@
   "miniapp": {
     "version": "1",
     "name": "Yoink!",
-    "iconUrl": "https://your-app.vercel.app/tree.png",
-    "homeUrl": "https://your-app.vercel.app/framesV2/",
-    "imageUrl": "https://your-app.vercel.app/tree.png",
+    "iconUrl": "https://treexmini.vercel.app/tree.png",
+    "homeUrl": "https://treexmini.vercel.app//tree.png",
+    "imageUrl": "https://treexmini.vercel.app//tree.png",
     "buttonTitle": "🚩 Start",
-    "splashImageUrl": "https://your-app.vercel.app/logo.png",
+    "splashImageUrl": "https://treexmini.vercel.app/tree.png",
     "splashBackgroundColor": "#f5f0ec",
     "requiredChains": ["eip155:8453"],
     "requiredCapabilities": [
