@@ -1,0 +1,20 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Tree",
+    "iconUrl": "https://treexmini.vercel.app/tree.png",
+    "homeUrl": "https://treexmini.vercel.app",
+    "imageUrl": "https://treexmini.vercel.app/tree.png",
+    "buttonTitle": "🚩 Start",
+    "splashImageUrl": "https://treexmini.vercel.app/tree.png",
+    "splashBackgroundColor": "#f5f0ec",
+    "requiredChains": [
+      "eip155:8453"
+    ],
+    "requiredCapabilities": [
+      "actions.signIn",
+      "wallet.getEthereumProvider",
+      "actions.swapToken"
+    ]
+  }
+}
