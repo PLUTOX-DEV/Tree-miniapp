@@ -1,0 +1,18 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Yoink!",
+    "iconUrl": "https://your-app.vercel.app/tree.png",
+    "homeUrl": "https://your-app.vercel.app/framesV2/",
+    "imageUrl": "https://your-app.vercel.app/tree.png",
+    "buttonTitle": "🚩 Start",
+    "splashImageUrl": "https://your-app.vercel.app/logo.png",
+    "splashBackgroundColor": "#f5f0ec",
+    "requiredChains": ["eip155:8453"],
+    "requiredCapabilities": [
+      "actions.signIn",
+      "wallet.getEthereumProvider",
+      "actions.swapToken"
+    ]
+  }
+}
