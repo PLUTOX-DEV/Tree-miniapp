@@ -3,5 +3,21 @@
     "header": "eyJmaWQiOjEyMjA0MzYsInR5cGUiOiJhdXRoIiwia2V5IjoiMHhlNzM0OGI1YjVFODg3RjkxOTdFODNmRTM5ZkFCQzkyRjIyNGREMjc2In0",
     "payload": "eyJkb21haW4iOiJ0cmVleG1pbmkudmVyY2VsLmFwcCJ9",
     "signature": "UxjbOdXFLTTudLtgFKICj4ePULRKwBDwRO16DPcZJGI8pIQUMF3bZ4Yu/txXilt8ClCs9XnOg8cBqCNNgL7nxxs="
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Tree",
+    "iconUrl": "https://treexmini.vercel.app/tree.png",
+    "homeUrl": "https://treexmini.vercel.app",
+    "imageUrl": "https://treexmini.vercel.app/tree.png",
+    "buttonTitle": "🚩 Start",
+    "splashImageUrl": "https://treexmini.vercel.app/tree.png",
+    "splashBackgroundColor": "#f5f0ec",
+    "requiredChains": ["eip155:8453"],
+    "requiredCapabilities": [
+      "actions.signIn",
+      "wallet.getEthereumProvider",
+      "actions.swapToken"
+    ]
   }
 }
