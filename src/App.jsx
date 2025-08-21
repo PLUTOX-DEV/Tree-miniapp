@@ -1,5 +1,5 @@
 // App.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Welcome from "./Welcome";
 import TapToGrowTree from "./TapToGrowTree";
 import ProfilePage from "./ProfilePage";
@@ -10,6 +10,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mainnet } from "wagmi/chains";
 import { injected, metaMask } from "wagmi/connectors";
 import { useDisconnect } from "wagmi";
+
+// ✅ Farcaster Frame SDK
+import sdk from "@farcaster/frame-sdk";
 
 // ✅ wagmi v2 config
 const config = createConfig({
@@ -29,6 +32,11 @@ const queryClient = new QueryClient();
 export default function App() {
   const [profile, setProfile] = useState(null);
   const [page, setPage] = useState("game"); // "game" | "profile"
+
+  // ✅ Call Farcaster ready on mount
+  useEffect(() => {
+    sdk.actions.ready();
+  }, []);
 
   return (
     <WagmiProvider config={config}>
