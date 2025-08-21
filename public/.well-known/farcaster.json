@@ -1,7 +1,7 @@
 {
   "miniapp": {
     "version": "1",
-    "name": "Yoink!",
+    "name": "Tree",
     "iconUrl": "https://treexmini.vercel.app/tree.png",
     "homeUrl": "https://treexmini.vercel.app",
     "imageUrl": "https://treexmini.vercel.app//tree.png",
