@@ -1,5 +1,6 @@
 // App.jsx
 import { useState, useEffect } from "react";
+import HomePage from "./HomePage";
 import Welcome from "./Welcome";
 import TapToGrowTree from "./TapToGrowTree";
 import ProfilePage from "./ProfilePage";
@@ -8,7 +9,7 @@ import ProfilePage from "./ProfilePage";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mainnet } from "wagmi/chains";
-import { injected, metaMask } from "wagmi/connectors";
+import { injected, metaMask, coinbaseWallet } from "wagmi/connectors";
 import { useDisconnect } from "wagmi";
 
 // ✅ Farcaster Frame SDK
@@ -23,6 +24,10 @@ const config = createConfig({
   connectors: [
     injected({ chains: [mainnet] }),
     metaMask({ chains: [mainnet] }),
+    coinbaseWallet({
+      chains: [mainnet],
+      appName: 'Tap to Grow'
+    }),
   ],
   autoConnect: true,
 });
@@ -56,11 +61,26 @@ export default function App() {
 function AppContent({ profile, setProfile, page, setPage }) {
   const { disconnect } = useDisconnect();
 
-  const handleLogout = () => {
-    disconnect({ revoke: true });
-    setProfile(null);
+  const handleLogout = async () => {
+    try {
+      await disconnect();
+      setProfile(null);
+      setPage("home");
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force logout even if disconnect fails
+      setProfile(null);
+      setPage("home");
+    }
+  };
+
+  const handleGetStarted = () => {
     setPage("game");
   };
+
+  if (page === "home") {
+    return <HomePage onGetStarted={handleGetStarted} />;
+  }
 
   if (!profile) {
     return (
