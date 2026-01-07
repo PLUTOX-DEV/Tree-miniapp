@@ -212,19 +212,19 @@ export default function TapToGrowTree({
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center mb-6 relative z-10"
+        className="flex flex-col sm:flex-row justify-between items-center mb-6 relative z-10 gap-4"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="p-2 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl">
-            <TreePine className="w-6 h-6 text-white" />
+            <TreePine className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             TAP TO GROW
           </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg">
-            <span className="text-sm text-gray-300">Prestige: <span className="text-yellow-400 font-semibold">{soft_resets}</span></span>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="px-2 sm:px-3 py-1 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg">
+            <span className="text-xs sm:text-sm text-gray-300">Prestige: <span className="text-yellow-400 font-semibold">{soft_resets}</span></span>
           </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -233,9 +233,9 @@ export default function TapToGrowTree({
               disconnect();
               onLogout();
             }}
-            className="px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 text-white text-sm flex items-center gap-2 shadow-lg hover:shadow-red-500/25 transition-all duration-300"
+            className="px-2 sm:px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs sm:text-sm flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-red-500/25 transition-all duration-300"
           >
-            <LogOut size={16} />
+            <LogOut size={14} />
             <span className="hidden sm:inline">Logout</span>
           </motion.button>
 
@@ -243,7 +243,7 @@ export default function TapToGrowTree({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={goToProfile}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-blue-600 text-white text-sm font-semibold shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
+            className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-blue-600 text-white text-xs sm:text-sm font-semibold shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
           >
             👤 Profile
           </motion.button>
@@ -270,7 +270,7 @@ export default function TapToGrowTree({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="grid grid-cols-3 gap-4 mb-6"
+          className="grid grid-cols-3 gap-2 sm:gap-4 mb-6"
         >
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -400,7 +400,7 @@ export default function TapToGrowTree({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="grid grid-cols-2 gap-4 mb-6"
+          className="grid grid-cols-2 gap-2 sm:gap-4 mb-6"
         >
           <motion.button
             whileHover={{ scale: points >= tapCost ? 1.05 : 1 }}

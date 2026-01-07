@@ -22,6 +22,7 @@ export default function Welcome({ onConnect }) {
   const { disconnect } = useDisconnect();
   const [walletError, setWalletError] = useState(null);
   const [farcasterUser, setFarcasterUser] = useState(null);
+  const [farcasterLoading, setFarcasterLoading] = useState(false);
 
   const shortAddr = (addr) =>
     addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
@@ -108,11 +109,32 @@ export default function Welcome({ onConnect }) {
   const handleConnect = async (connector) => {
     try {
       if (connector.name === "Farcaster") {
-        // Farcaster is handled via Frame SDK, just proceed
-        if (farcasterUser) {
-          onConnect({ wallet: `farcaster-${farcasterUser.fid}`, farcaster_username: farcasterUser.username });
+        setFarcasterLoading(true);
+        setWalletError(null);
+
+        // Try to get Farcaster context if not available
+        let user = farcasterUser;
+        if (!user) {
+          try {
+            const context = await sdk.context;
+            if (context?.user) {
+              user = context.user;
+              setFarcasterUser(user);
+            }
+          } catch (err) {
+            console.log("Failed to get Farcaster context:", err);
+          }
+        }
+
+        setFarcasterLoading(false);
+
+        if (user) {
+          onConnect({
+            wallet: `farcaster-${user.fid}`,
+            farcaster_username: user.username
+          });
         } else {
-          setWalletError("Farcaster user not found. Please make sure you're logged into Farcaster.");
+          setWalletError("Unable to connect to Farcaster. Please make sure you're logged in and try again.");
         }
         return;
       }
@@ -124,11 +146,12 @@ export default function Welcome({ onConnect }) {
       setWalletError(
         "Failed to connect wallet. Make sure the wallet is installed."
       );
+      setFarcasterLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden px-4 py-8">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent"></div>
@@ -140,7 +163,7 @@ export default function Welcome({ onConnect }) {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-3xl shadow-2xl text-center w-full max-w-md relative z-10"
+        className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-6 sm:p-8 rounded-3xl shadow-2xl text-center w-full max-w-sm sm:max-w-md relative z-10 mx-4"
       >
         {/* Header */}
         <motion.div
@@ -154,10 +177,10 @@ export default function Welcome({ onConnect }) {
               <Wallet className="w-8 h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-xl sm:text-2xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
             Connect Wallet
           </h1>
-          <p className="text-gray-300 text-sm">Choose your preferred Web3 wallet to enter the forest</p>
+          <p className="text-gray-300 text-xs sm:text-sm px-2">Choose your preferred Web3 wallet to enter the forest</p>
         </motion.div>
 
         {isConnected ? (
@@ -219,13 +242,18 @@ export default function Welcome({ onConnect }) {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleConnect(c)}
-                    disabled={isLoading && pendingConnector?.id === c.id && c.name !== "Farcaster"}
-                    className="w-full flex items-center justify-center gap-4 px-6 py-4 bg-gradient-to-r from-slate-700/50 to-slate-800/50 hover:from-slate-600/50 hover:to-slate-700/50 border border-slate-600/50 rounded-2xl text-white font-semibold shadow-lg hover:shadow-purple-500/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
+                    disabled={isLoading && pendingConnector?.id === c.id && c.name !== "Farcaster" || farcasterLoading && c.name === "Farcaster"}
+                    className="w-full flex items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-slate-700/50 to-slate-800/50 hover:from-slate-600/50 hover:to-slate-700/50 border border-slate-600/50 rounded-2xl text-white font-semibold shadow-lg hover:shadow-purple-500/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group text-sm sm:text-base"
                   >
                     {isLoading && pendingConnector?.id === c.id ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         <span>Connecting...</span>
+                      </>
+                    ) : farcasterLoading && c.name === "Farcaster" ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Connecting to Farcaster...</span>
                       </>
                     ) : c.name === "Farcaster" ? (
                       <>
