@@ -82,7 +82,22 @@ npm run dev
 ```
 Frontend runs on `http://localhost:5173`
 
-### 5. Vercel Deployment (Backend + Frontend)
+### 5. Vercel Deployment Options
+
+#### **Option A: Deploy Everything Together (Recommended)**
+Deploys both frontend and backend as serverless functions:
+```bash
+vercel
+```
+
+#### **Option B: Deploy Backend Separately**
+If you want to deploy only the backend:
+```bash
+cd backend
+npx vercel --prod
+```
+
+### 6. Configure Environment Variables
 
 #### **Method 1: Vercel CLI (Recommended)**
 

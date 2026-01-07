@@ -8,10 +8,10 @@ import sdk from "@farcaster/frame-sdk";
 // ✅ Reliable wallet logos
 const walletLogos = {
   MetaMask: "/metamask-icon.png",
-  "Coinbase Wallet": "/metamask-icon.png", // Using MetaMask icon as fallback for now
+  "Coinbase Wallet": "/coinbase.svg", // Using MetaMask icon as fallback for now
   BitKeep: "/bitkeep.png",
   Bitget: "/bitget.png",
-  Farcaster: "/tree.png", // Using tree icon for Farcaster
+  Farcaster: "/Farcaster.png", // Using tree icon for Farcaster
   "Injected": "/metamask-icon.png", // fallback for injected wallets
 };
 
