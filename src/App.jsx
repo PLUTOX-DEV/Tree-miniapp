@@ -98,6 +98,7 @@ function AppContent({ profile, setProfile, page, setPage }) {
     return (
       <TapToGrowTree
         profile={profile}
+        setProfile={setProfile}
         onLogout={handleLogout}
         goToProfile={() => setPage("profile")}
       />
