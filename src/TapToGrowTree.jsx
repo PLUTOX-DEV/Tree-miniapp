@@ -6,7 +6,6 @@ import {
   Zap,
   Clock,
   Gift,
-  RefreshCcw,
   Crown,
   LogOut,
   TreePine,
@@ -15,110 +14,125 @@ import {
 } from "lucide-react";
 import { useDisconnect } from "wagmi";
 
+/* =======================
+   LEVEL DATA (NO EMOJI)
+======================= */
 const LEVELS = [
-  { name: "Seed", xp: 0, icon: "🌱" },
-  { name: "Sprout", xp: 100, icon: "🌿" },
-  { name: "Sapling", xp: 300, icon: "🌳" },
-  { name: "Young Tree", xp: 750, icon: "🌲" },
-  { name: "Mature Oak", xp: 1500, icon: "🌳" },
-  { name: "Ancient Guardian", xp: 3000, icon: "🦉" },
-  { name: "Enchanted Willow", xp: 5000, icon: "✨" },
-  { name: "Crystal Tree", xp: 8000, icon: "💎" },
-  { name: "Tree of Eternity", xp: 12000, icon: "🌟" },
-  { name: "Cosmic Sentinel", xp: 18000, icon: "🌌" },
-  { name: "Legendary Phoenix Tree", xp: 25000, icon: "🔥" },
-  { name: "Divine Redwood", xp: 35000, icon: "🌲" },
-  { name: "Mythical Yggdrasil", xp: 50000, icon: "🌍" },
-  { name: "Celestial Oak", xp: 70000, icon: "⭐" },
-  { name: "Quantum Arbor", xp: 95000, icon: "⚛️" },
-  { name: "Nebula Grove", xp: 125000, icon: "🌠" },
-  { name: "Galactic Nexus", xp: 160000, icon: "🌀" },
-  { name: "Eternal Forest Lord", xp: 200000, icon: "👑" },
-  { name: "Dimensional Weaver", xp: 250000, icon: "🌈" },
-  { name: "Void Tree", xp: 320000, icon: "🕳️" },
-  { name: "Reality Anchor", xp: 400000, icon: "🎯" },
-  { name: "Multiverse Sage", xp: 500000, icon: "🌌" },
-  { name: "Infinite Arborist", xp: 650000, icon: "♾️" },
-  { name: "Chaos Tree", xp: 850000, icon: "🌪️" },
-  { name: "Harmony Weaver", xp: 1100000, icon: "🎵" },
-  { name: "Time Lord Oak", xp: 1400000, icon: "⏰" },
-  { name: "Soul Tree", xp: 1800000, icon: "👻" },
-  { name: "Dream Weaver", xp: 2300000, icon: "💭" },
-  { name: "Legend of the Forest", xp: 3000000, icon: "🏆" },
-  { name: "Ultimate Tree of Power", xp: 4000000, icon: "⚡" },
-  { name: "God Tree", xp: 5500000, icon: "👼" },
-  { name: "Supreme Arbor", xp: 7500000, icon: "👑" },
-  { name: "Transcendent Grove", xp: 10000000, icon: "✨" },
-  { name: "Omega Tree", xp: 15000000, icon: "🌀" },
-  { name: "Final Arbiter", xp: 25000000, icon: "⚖️" },
+  { name: "Seed", xp: 0 },
+  { name: "Sprout", xp: 100 },
+  { name: "Sapling", xp: 300 },
+  { name: "Young Tree", xp: 750 },
+  { name: "Mature Oak", xp: 1500 },
+  { name: "Ancient Guardian", xp: 3000 },
+  { name: "Enchanted Willow", xp: 5000 },
+  { name: "Crystal Tree", xp: 8000 },
+  { name: "Tree of Eternity", xp: 12000 },
+  { name: "Cosmic Sentinel", xp: 18000 },
+  { name: "Legendary Phoenix Tree", xp: 25000 },
+  { name: "Divine Redwood", xp: 35000 },
+  { name: "Mythical Yggdrasil", xp: 50000 },
+  { name: "Celestial Oak", xp: 70000 },
+  { name: "Quantum Arbor", xp: 95000 },
+  { name: "Nebula Grove", xp: 125000 },
+  { name: "Galactic Nexus", xp: 160000 },
+  { name: "Eternal Forest Lord", xp: 200000 },
+  { name: "Dimensional Weaver", xp: 250000 },
+  { name: "Void Tree", xp: 320000 },
+  { name: "Reality Anchor", xp: 400000 },
+  { name: "Multiverse Sage", xp: 500000 },
+  { name: "Infinite Arborist", xp: 650000 },
+  { name: "Chaos Tree", xp: 850000 },
+  { name: "Harmony Weaver", xp: 1100000 },
+  { name: "Time Lord Oak", xp: 1400000 },
+  { name: "Soul Tree", xp: 1800000 },
+  { name: "Dream Weaver", xp: 2300000 },
+  { name: "Legend of the Forest", xp: 3000000 },
+  { name: "Ultimate Tree of Power", xp: 4000000 },
+  { name: "God Tree", xp: 5500000 },
+  { name: "Supreme Arbor", xp: 7500000 },
+  { name: "Transcendent Grove", xp: 10000000 },
+  { name: "Omega Tree", xp: 15000000 },
+  { name: "Final Arbiter", xp: 25000000 },
+];
+
+/* =======================
+   LEVEL ICON MAP
+======================= */
+const LEVEL_ICONS = [
+  Leaf, Leaf, TreePine, TreePine, TreePine,
+  Sparkles, Sparkles, Crown, Crown, Crown,
+  Trophy, Trophy, Trophy, Crown, Crown,
+  Sparkles, Sparkles, Crown, Crown, Sparkles,
+  Sparkles, Crown, Crown, Sparkles, Sparkles,
+  Crown, Crown, Trophy, Trophy, Sparkles,
+  Crown, Crown, Sparkles, Crown, Trophy,
 ];
 
 const format = (n) => n.toLocaleString();
 
+/* =======================
+   COMPONENT
+======================= */
 export default function TapToGrowTree({
   profile: initialProfile,
   onLogout,
   goToProfile,
 }) {
+  const { disconnect } = useDisconnect();
   const [profile, setProfile] = useState(initialProfile);
   const [tapCost, setTapCost] = useState(50);
   const [autoCost, setAutoCost] = useState(150);
   const [leveledUp, setLeveledUp] = useState(null);
 
-  // 🔄 auto-save
+  /* =======================
+     AUTO SAVE
+  ======================= */
   useEffect(() => {
     if (!profile?.wallet) return;
-    const save = async () => {
+    const t = setTimeout(async () => {
       try {
-        await fetch(`${import.meta.env.VITE_API_URL}/api/users/${profile.wallet}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            points: profile.points,
-            xp: profile.xp,
-            tap_power: profile.tap_power,
-            auto_level: profile.auto_level,
-            last_daily: profile.last_daily
-              ? new Date(profile.last_daily).toISOString()
-              : null,
-            total_taps: profile.total_taps,
-            soft_resets: profile.soft_resets,
-          }),
-        });
-      } catch (error) {
-        console.error('Save error:', error);
-      }
-    };
-    const t = setTimeout(save, 600);
+        await fetch(
+          `${import.meta.env.VITE_API_URL}/api/users/${profile.wallet}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(profile),
+          }
+        );
+      } catch {}
+    }, 600);
     return () => clearTimeout(t);
   }, [profile]);
 
-  if (!profile) return <div className="p-6 text-center">Loading tree… 🌱</div>;
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-gray-400">
+        Loading…
+      </div>
+    );
+  }
 
-  // 🧩 helpers
-  const setField = (field, val) =>
-    setProfile((p) => ({
-      ...p,
-      [field]: typeof val === "function" ? val(p[field]) : val,
-    }));
+  const setField = (k, v) =>
+    setProfile((p) => ({ ...p, [k]: typeof v === "function" ? v(p[k]) : v }));
 
   const {
     points,
     xp,
     tap_power,
     auto_level,
-    last_daily,
     total_taps,
+    last_daily,
     soft_resets,
   } = profile;
 
-  // ✅ level
+  /* =======================
+     LEVEL CALC
+  ======================= */
   const levelIndex = useMemo(
-    () => LEVELS.reduce((acc, lvl, i) => (xp >= lvl.xp ? i : acc), 0),
+    () => LEVELS.reduce((a, l, i) => (xp >= l.xp ? i : a), 0),
     [xp]
   );
+
   const currentLevel = LEVELS[levelIndex];
   const nextLevel = LEVELS[Math.min(levelIndex + 1, LEVELS.length - 1)];
   const maxed = levelIndex === LEVELS.length - 1;
@@ -126,38 +140,46 @@ export default function TapToGrowTree({
     ? 1
     : (xp - currentLevel.xp) / (nextLevel.xp - currentLevel.xp);
 
-  // 🎉 detect level up
+  const LevelIcon = LEVEL_ICONS[levelIndex] || TreePine;
+
+  /* =======================
+     LEVEL UP EFFECT
+  ======================= */
   useEffect(() => {
-    if (xp >= nextLevel.xp && !maxed) {
+    if (!maxed && xp >= nextLevel.xp) {
       setLeveledUp(nextLevel.name);
-      setTimeout(() => setLeveledUp(null), 3000);
+      setTimeout(() => setLeveledUp(null), 2500);
     }
   }, [xp]);
 
-  // ✅ auto grow
+  /* =======================
+     AUTO GROW
+  ======================= */
   useEffect(() => {
     if (auto_level <= 0) return;
     const id = setInterval(() => {
       setField("points", (p) => p + auto_level);
-      setField("xp", (p) => p + auto_level);
+      setField("xp", (x) => x + auto_level);
     }, 1000);
     return () => clearInterval(id);
   }, [auto_level]);
 
-  // ✅ tap
+  /* =======================
+     ACTIONS
+  ======================= */
   const onTap = () => {
     setField("points", points + tap_power);
     setField("xp", xp + tap_power);
     setField("total_taps", total_taps + 1);
   };
 
-  // ✅ upgrades
   const buyTap = () => {
     if (points < tapCost) return;
     setField("points", points - tapCost);
     setField("tap_power", tap_power + 1);
     setTapCost(Math.ceil(tapCost * 1.7));
   };
+
   const buyAuto = () => {
     if (points < autoCost) return;
     setField("points", points - autoCost);
@@ -165,356 +187,178 @@ export default function TapToGrowTree({
     setAutoCost(Math.ceil(autoCost * 1.8));
   };
 
-  // ✅ daily reward
-  const millisInDay = 24 * 60 * 60 * 1000;
-  const now = Date.now();
   const canClaimDaily =
-    !last_daily || now - new Date(last_daily).getTime() > millisInDay;
+    !last_daily || Date.now() - new Date(last_daily).getTime() > 86400000;
 
   const claimDaily = () => {
     if (!canClaimDaily) return;
-    const reward = 100 + Math.floor(levelIndex * 25 + soft_resets * 50);
+    const reward = 100 + levelIndex * 25 + soft_resets * 50;
     setField("points", points + reward);
     setField("xp", xp + Math.floor(reward / 2));
     setField("last_daily", new Date().toISOString());
   };
 
-  // ✅ prestige
-  const softReset = () => {
-    if (xp < 500) return;
-    const bonus = 1 + Math.floor(xp / 1500);
-    setProfile({
-      ...profile,
-      points: 0,
-      xp: 0,
-      auto_level: 0,
-      tap_power: 1 + bonus + soft_resets,
-      total_taps: 0,
-      soft_resets: soft_resets + 1,
-      last_daily: null,
-    });
-    setTapCost(50);
-    setAutoCost(150);
-  };
-  // inside TapToGrowTree component
-  const { disconnect } = useDisconnect();
-
+  /* =======================
+     UI
+  ======================= */
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4 sm:p-6 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-green-900/10 via-transparent to-transparent"></div>
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* 🔝 top navbar */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-center mb-6 relative z-10 gap-4"
-      >
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="p-2 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl">
-            <TreePine className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6">
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-emerald-500/20 border border-emerald-400/30">
+            <TreePine className="text-emerald-400" />
           </div>
-          <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-            TAP TO GROW
-          </h1>
+          <h1 className="text-xl font-bold tracking-wide">Tap To Grow</h1>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="px-2 sm:px-3 py-1 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg">
-            <span className="text-xs sm:text-sm text-gray-300">Prestige: <span className="text-yellow-400 font-semibold">{soft_resets}</span></span>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <div className="flex gap-2">
+          <button
+            onClick={goToProfile}
+            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition"
+          >
+            Profile
+          </button>
+          <button
             onClick={() => {
               disconnect();
               onLogout();
             }}
-            className="px-2 sm:px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs sm:text-sm flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-red-500/25 transition-all duration-300"
+            className="p-2 rounded-xl bg-red-500/20 border border-red-400/30"
           >
-            <LogOut size={14} />
-            <span className="hidden sm:inline">Logout</span>
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={goToProfile}
-            className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-blue-600 text-white text-xs sm:text-sm font-semibold shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
-          >
-            👤 Profile
-          </motion.button>
+            <LogOut />
+          </button>
         </div>
-      </motion.div>
+      </div>
 
-      {/* 🎉 level up popup */}
+      {/* LEVEL UP */}
       <AnimatePresence>
         {leveledUp && (
           <motion.div
-            initial={{ opacity: 0, y: -40 }}
+            initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="fixed top-10 left-1/2 -translate-x-1/2 bg-amber-500 text-white px-6 py-2 rounded-2xl shadow-lg font-bold"
+            className="fixed top-6 left-1/2 -translate-x-1/2 px-6 py-3 bg-emerald-500 text-black font-bold rounded-2xl shadow-xl"
           >
-            🎉 Leveled up! Welcome to {leveledUp}!
+            New Rank: {leveledUp}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="mx-auto max-w-lg relative z-10">
-        {/* stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-3 gap-2 sm:gap-4 mb-6"
-        >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-4 rounded-2xl shadow-xl"
-          >
-            <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Points</div>
-            <div className="font-bold text-xl text-green-400">{format(points)}</div>
-            <div className="w-full h-1 bg-slate-700 rounded-full mt-2">
-              <motion.div
-                className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 0.8 }}
-              />
-            </div>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-4 rounded-2xl shadow-xl"
-          >
-            <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Tap Power</div>
-            <div className="font-bold flex items-center text-yellow-400">
-              <Zap className="w-5 h-5 mr-2" /> x{tap_power}
-            </div>
-            <div className="w-full h-1 bg-slate-700 rounded-full mt-2">
-              <motion.div
-                className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-              />
-            </div>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-4 rounded-2xl shadow-xl"
-          >
-            <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Auto Grow</div>
-            <div className="font-bold flex items-center text-blue-400">
-              <Clock className="w-5 h-5 mr-2" /> {auto_level}/s
-            </div>
-            <div className="w-full h-1 bg-slate-700 rounded-full mt-2">
-              <motion.div
-                className="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              />
-            </div>
-          </motion.div>
-        </motion.div>
+      {/* STATS */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <Stat title="Points" value={format(points)} icon={Leaf} />
+        <Stat title="Tap Power" value={`x${tap_power}`} icon={Zap} />
+        <Stat title="Auto /s" value={auto_level} icon={Clock} />
+      </div>
 
-        {/* progress */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-6 rounded-2xl shadow-2xl mb-6"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg">
-                <Trophy className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-xl text-white">{currentLevel.name}</span>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-gray-400">Total Taps</div>
-              <div className="font-semibold text-purple-400">{format(total_taps)}</div>
-            </div>
-          </div>
-          <div className="h-4 bg-slate-700/50 rounded-full overflow-hidden mb-3">
-            <motion.div
-              className="h-full bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 rounded-full shadow-lg"
-              animate={{ width: `${Math.round(progress * 100)}%` }}
-              transition={{ duration: 0.8 }}
-            />
-          </div>
-          <div className="text-sm text-gray-300">
-            {maxed
-              ? "🎉 Max level reached! You are the ultimate grower!"
-              : `${format(xp - currentLevel.xp)} / ${format(
-                  nextLevel.xp - currentLevel.xp
-                )} XP to ${nextLevel.name}`}
-          </div>
-        </motion.div>
-
-        {/* tap area */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm border border-slate-700/30 p-8 rounded-3xl shadow-2xl text-center mb-6 relative overflow-hidden"
-        >
-          {/* Animated background glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-blue-500/5 rounded-3xl"></div>
-
-          <motion.div
-            key={xp}
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={{ duration: 0.3 }}
-            className="text-8xl mb-6 relative z-10"
-          >
-            {currentLevel.icon}
-          </motion.div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onTap}
-            className="relative px-8 py-4 bg-gradient-to-r from-green-500 via-blue-600 to-purple-600 text-white rounded-2xl shadow-2xl hover:shadow-green-500/25 font-bold text-lg transition-all duration-300 overflow-hidden group"
-          >
-            <span className="flex items-center gap-3 relative z-10">
-              <Zap className="w-5 h-5" />
-              GROW +{tap_power} XP
-              <Sparkles className="w-5 h-5" />
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-          </motion.button>
-        </motion.div>
-
-        {/* upgrades */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="grid grid-cols-2 gap-2 sm:gap-4 mb-6"
-        >
-          <motion.button
-            whileHover={{ scale: points >= tapCost ? 1.05 : 1 }}
-            whileTap={{ scale: points >= tapCost ? 0.95 : 1 }}
-            onClick={buyTap}
-            disabled={points < tapCost}
-            className={`relative p-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
-              points >= tapCost
-                ? "bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-xl hover:shadow-yellow-500/25"
-                : "bg-slate-800/50 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            <div className="flex flex-col items-center gap-2 relative z-10">
-              <Zap className="w-6 h-6" />
-              <span className="text-sm">Tap Power</span>
-              <span className="text-lg font-bold">{format(tapCost)}</span>
-            </div>
-            {points >= tapCost && (
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 opacity-0 hover:opacity-20 transition-opacity duration-300"></div>
-            )}
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: points >= autoCost ? 1.05 : 1 }}
-            whileTap={{ scale: points >= autoCost ? 0.95 : 1 }}
-            onClick={buyAuto}
-            disabled={points < autoCost}
-            className={`relative p-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
-              points >= autoCost
-                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl hover:shadow-blue-500/25"
-                : "bg-slate-800/50 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            <div className="flex flex-col items-center gap-2 relative z-10">
-              <Clock className="w-6 h-6" />
-              <span className="text-sm">Auto Grow</span>
-              <span className="text-lg font-bold">{format(autoCost)}</span>
-            </div>
-            {points >= autoCost && (
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 opacity-0 hover:opacity-20 transition-opacity duration-300"></div>
-            )}
-          </motion.button>
-        </motion.div>
-
-        {/* daily reward */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-6 rounded-2xl shadow-xl flex justify-between items-center"
-        >
+      {/* PROGRESS */}
+      <div className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-5 mb-6">
+        <div className="flex justify-between mb-3">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg">
-              <Gift className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <div className="font-bold text-white">Daily Reward</div>
-              <div className="text-sm text-gray-400">Claim your bonus!</div>
-            </div>
+            <LevelIcon className="text-emerald-400" />
+            <span className="font-semibold">{currentLevel.name}</span>
           </div>
-          <motion.button
-            whileHover={{ scale: canClaimDaily ? 1.05 : 1 }}
-            whileTap={{ scale: canClaimDaily ? 0.95 : 1 }}
-            onClick={claimDaily}
-            disabled={!canClaimDaily}
-            animate={
-              canClaimDaily
-                ? {
-                    scale: [1, 1.1, 1],
-                    transition: { repeat: Infinity, duration: 2 },
-                  }
-                : {}
-            }
-            className={`relative px-6 py-3 rounded-xl font-bold transition-all duration-300 overflow-hidden ${
-              canClaimDaily
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-xl hover:shadow-amber-500/25"
-                : "bg-slate-700/50 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            <span className="flex items-center gap-2 relative z-10">
-              {canClaimDaily ? <Sparkles className="w-4 h-4" /> : <Gift className="w-4 h-4" />}
-              {canClaimDaily ? "Claim" : "Claimed"}
-            </span>
-            {canClaimDaily && (
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500 opacity-0 hover:opacity-20 transition-opacity duration-300"></div>
-            )}
-          </motion.button>
+          <span className="text-sm text-gray-400">
+            {format(xp)} XP
+          </span>
+        </div>
+        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-emerald-400 to-blue-500"
+            animate={{ width: `${progress * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* TAP */}
+      <div className="bg-slate-900/60 border border-slate-700/50 rounded-3xl p-8 mb-6 text-center">
+        <motion.div
+          key={xp}
+          animate={{ scale: [1, 1.15, 1] }}
+          className="flex justify-center mb-6"
+        >
+          <div className="w-28 h-28 rounded-full bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center">
+            <LevelIcon className="w-14 h-14 text-emerald-400" />
+          </div>
         </motion.div>
 
-        {/* leaderboard placeholder */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1 }}
-          className="mt-8 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 p-6 rounded-2xl shadow-xl"
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={onTap}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-blue-600 font-semibold shadow-xl"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-lg">
-              <Crown className="text-white w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="font-bold text-xl text-white">Global Leaderboard</h2>
-              <p className="text-sm text-gray-400">Coming Soon - Compete Worldwide!</p>
-            </div>
+          <div className="flex justify-center gap-3">
+            <Zap /> Grow +{tap_power} XP
           </div>
-          <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
-            <div className="flex items-center justify-center gap-3 text-gray-500">
-              <Trophy className="w-8 h-8" />
-              <span className="text-lg">Be the first to claim the throne!</span>
-              <Sparkles className="w-8 h-8" />
-            </div>
+        </motion.button>
+      </div>
+
+      {/* UPGRADES */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <Upgrade
+          title="Tap Power"
+          icon={Zap}
+          cost={tapCost}
+          onClick={buyTap}
+          disabled={points < tapCost}
+        />
+        <Upgrade
+          title="Auto Grow"
+          icon={Clock}
+          cost={autoCost}
+          onClick={buyAuto}
+          disabled={points < autoCost}
+        />
+      </div>
+
+      {/* DAILY */}
+      <div className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-5 flex justify-between items-center">
+        <div className="flex gap-3 items-center">
+          <Gift className="text-amber-400" />
+          <div>
+            <p className="font-semibold">Daily Reward</p>
+            <p className="text-xs text-gray-400">24h cooldown</p>
           </div>
-        </motion.div>
+        </div>
+        <button
+          onClick={claimDaily}
+          disabled={!canClaimDaily}
+          className={`px-6 py-2 rounded-xl font-semibold ${
+            canClaimDaily
+              ? "bg-amber-500 text-black"
+              : "bg-slate-700 text-gray-400"
+          }`}
+        >
+          Claim
+        </button>
       </div>
     </div>
   );
 }
+
+/* =======================
+   SMALL COMPONENTS
+======================= */
+const Stat = ({ title, value, icon: Icon }) => (
+  <div className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4">
+    <Icon className="text-emerald-400 mb-2" />
+    <p className="text-xs text-gray-400">{title}</p>
+    <p className="font-bold">{value}</p>
+  </div>
+);
+
+const Upgrade = ({ title, icon: Icon, cost, onClick, disabled }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`p-4 rounded-2xl border transition ${
+      disabled
+        ? "bg-slate-800 border-slate-700 text-gray-500"
+        : "bg-slate-900 border-emerald-400/30 hover:bg-slate-800"
+    }`}
+  >
+    <Icon className="mb-2" />
+    <p className="text-sm">{title}</p>
+    <p className="font-bold">{format(cost)}</p>
+  </button>
+);
