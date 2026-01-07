@@ -126,14 +126,48 @@ export default function Welcome({ onConnect }) {
           }
         }
 
-        setFarcasterLoading(false);
-
         if (user) {
-          onConnect({
-            wallet: `farcaster-${user.fid}`,
-            farcaster_username: user.username
-          });
+          console.log("Farcaster user found:", user);
+          // Create a virtual wallet address for Farcaster user
+          const farcasterWallet = `farcaster-${user.fid}`;
+          console.log("Creating Farcaster profile for wallet:", farcasterWallet);
+
+          try {
+            // Make API call to create/retrieve Farcaster profile
+            const apiUrl = `${import.meta.env.VITE_API_URL}/api/users/${farcasterWallet}`;
+            console.log("Making API call to:", apiUrl);
+
+            const response = await fetch(apiUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                farcaster_username: user.username
+              }),
+            });
+
+            console.log("API response status:", response.status);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error("API error response:", errorText);
+              throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+            }
+
+            const profileObj = await response.json();
+            console.log("Farcaster profile created/retrieved:", profileObj);
+
+            setFarcasterLoading(false);
+            onConnect(profileObj);
+          } catch (apiError) {
+            console.error("Farcaster profile creation error:", apiError);
+            setFarcasterLoading(false);
+            setWalletError(`Failed to create Farcaster profile: ${apiError.message}`);
+          }
         } else {
+          console.log("No Farcaster user found");
+          setFarcasterLoading(false);
           setWalletError("Unable to connect to Farcaster. Please make sure you're logged in and try again.");
         }
         return;
